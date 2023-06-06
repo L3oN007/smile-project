@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Camera Access Example</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f2f2f2;
+				padding: 20px;
+				text-align: center;
+			}
+
+			h1 {
+				color: #333;
+				margin-bottom: 30px;
+			}
+
+			#toggleButton,
+			#captureButton {
+				padding: 10px 20px;
+				font-size: 18px;
+				background-color: #2ecc71;
+				color: #fff;
+				border: none;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+			}
+
+			#toggleButton:hover,
+			#captureButton:hover {
+				background-color: #27ae60;
+			}
+
+			#video {
+				width: 100%;
+				max-width: 600px;
+				margin: 30px auto;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Camera Access Example</h1>
+		<a href="decode.html">Decode here</a>
+		<button id="toggleButton">Turn Camera On</button>
+		<button id="captureButton">Capture Image</button>
+		<video id="video" autoplay></video>
+
+		<script>
+			var stream; // Store the camera stream reference
+
+			function startCamera() {
+				navigator.mediaDevices
+					.getUserMedia({ video: true })
+					.then(function (mediaStream) {
+						var videoElement = document.getElementById('video');
+						videoElement.srcObject = mediaStream;
+						stream = mediaStream;
+						document.getElementById('toggleButton').textContent = 'Turn Camera Off';
+					})
+					.catch(function (error) {
+						console.log('Error accessing camera:', error);
+					});
+			}
+
+			function stopCamera() {
+				if (stream) {
+					stream.getTracks().forEach(function (track) {
+						track.stop();
+					});
+					stream = null;
+					document.getElementById('toggleButton').textContent = 'Turn Camera On';
+				}
+			}
+
+			function captureImage() {
+				var videoElement = document.getElementById('video');
+				var canvas = document.createElement('canvas');
+				canvas.width = videoElement.videoWidth;
+				canvas.height = videoElement.videoHeight;
+				var context = canvas.getContext('2d');
+				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+				var imgData = canvas.toDataURL('image/jpeg');
+				var encodedData = imgData.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+				console.log(encodedData);
+			}
+
+			document.getElementById('toggleButton').addEventListener('click', function () {
+				if (stream) {
+					stopCamera();
+				} else {
+					startCamera();
+				}
+			});
+
+			document.getElementById('captureButton').addEventListener('click', function () {
+				if (stream) {
+					captureImage();
+				} else {
+					alert('Please turn on the camera first.');
+				}
+			});
+		</script>
+	</body>
+</html>

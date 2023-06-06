@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Camera Capture and Image URL</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f2f2f2;
+				padding: 20px;
+				text-align: center;
+			}
+
+			h1 {
+				color: #333;
+				margin-bottom: 30px;
+			}
+
+			#captureButton {
+				padding: 10px 20px;
+				font-size: 18px;
+				background-color: #2ecc71;
+				color: #fff;
+				border: none;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+			}
+
+			#captureButton:hover {
+				background-color: #27ae60;
+			}
+
+			#capturedImage {
+				max-width: 100%;
+				margin-top: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Camera Capture and Image URL</h1>
+		<button id="captureButton">Capture Image</button>
+		<br />
+		<img id="capturedImage" alt="Captured Image" />
+		<script>
+			document.getElementById('captureButton').addEventListener('click', function () {
+				var video = document.createElement('video');
+				var canvas = document.createElement('canvas');
+				var context = canvas.getContext('2d');
+
+				navigator.mediaDevices
+					.getUserMedia({ video: true })
+					.then(function (stream) {
+						video.srcObject = stream;
+						video.play();
+					})
+					.catch(function (error) {
+						console.log('Error accessing camera:', error);
+					});
+
+				video.addEventListener('canplay', function () {
+					canvas.width = video.videoWidth;
+					canvas.height = video.videoHeight;
+					context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+					var imageUrl = canvas.toDataURL('image/png');
+					console.log(imageUrl); // Display the URL of the captured image
+
+					// Display the captured image on the page
+					var capturedImageElement = document.getElementById('capturedImage');
+					capturedImageElement.src = imageUrl;
+
+					// Stop the camera stream
+					video.srcObject.getTracks().forEach(function (track) {
+						track.stop();
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
