@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html>
+	<link type="image/x-icon" href="./smile.jpg" rel="icon" />
+	<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
 	<head>
 		<title>Camera Access Example</title>
 		<style>
 			body {
-				font-family: Arial, sans-serif;
+				font-family: Nunito;
 				background-color: #f2f2f2;
 				padding: 20px;
-				text-align: center;
+			}
+
+			.container {
+				display: flex;
+				flex-direction: row; /* Default layout for laptop screens */
+			}
+
+			.left-section {
+				flex-basis: 50%;
+				padding-right: 20px;
+				box-sizing: border-box;
+			}
+
+			.right-section {
+				padding: 50px 0;
+				flex-basis: 50%;
 			}
 
 			h1 {
@@ -39,16 +56,68 @@
 				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 				border-radius: 5px;
 			}
+
+			/* Media Query for Mobile Screens */
+			@media (max-width: 767px) {
+				.container {
+					flex-direction: column;
+				}
+
+				.left-section {
+					padding-right: 0;
+				}
+
+				.right-section {
+					margin-top: 20px;
+				}
+				button {
+					margin-top: 5px;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<h1>Camera Access Example</h1>
-		<a href="decode.html">Decode here</a>
-		<button id="toggleButton">Turn Camera On</button>
-		<button id="captureButton">Capture Image</button>
-		<video id="video" autoplay></video>
 
+		<div class="container">
+			<div class="left-section">
+				<video id="video" autoplay></video>
+			</div>
+			<div class="right-section">
+				<form id="imageUploadForm">
+					<label for="idInput">ID:</label>
+					<input type="text" id="idInput" name="id" /><br /><br />
+
+					<label for="nameInput">Name:</label>
+					<input type="text" id="nameInput" name="name" /><br /><br />
+
+					<label for="phoneInput">Phone Number:</label>
+					<input type="text" id="phoneInput" name="phone" /><br /><br />
+
+					<!-- Add the hidden input for image data -->
+					<input type="hidden" id="imageDataInput" name="imageData" />
+				</form>
+				<button id="toggleButton">Turn Camera On</button>
+				<button id="captureButton">Capture Image</button>
+			</div>
+		</div>
+
+		<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
 		<script>
+			// Initialize Firebase with your project's config
+			const firebaseConfig = {
+				apiKey: 'AIzaSyC2W_sRWNDdfPIZQUmX4ME0JHvC4nnIF4w',
+				authDomain: 'faceattendancerealtime-32bb4.firebaseapp.com',
+				databaseURL: 'https://faceattendancerealtime-32bb4-default-rtdb.firebaseio.com',
+				projectId: 'faceattendancerealtime-32bb4',
+				storageBucket: 'faceattendancerealtime-32bb4.appspot.com',
+				messagingSenderId: '227353722433',
+				appId: '1:227353722433:web:d04e13a938c682ca7b10c0',
+				measurementId: 'G-KJYSNQ555Q',
+			};
+			firebase.initializeApp(firebaseConfig);
+
 			var stream; // Store the camera stream reference
 
 			function startCamera() {
@@ -84,7 +153,55 @@
 				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 				var imgData = canvas.toDataURL('image/jpeg');
 				var encodedData = imgData.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-				console.log(encodedData);
+
+				// Get the ID from the input field
+				var id = document.getElementById('idInput').value;
+
+				// Create a folder name with the current date
+				var folderName = 'Images';
+
+				// Generate a unique filename for the image using the ID
+				var filename = folderName + '/' + id + '.jpg';
+
+				// Create a reference to the Firebase Storage bucket
+				var storageRef = firebase.storage().ref();
+
+				// Create a child reference to the image file
+				var imageRef = storageRef.child(filename);
+
+				// Upload the image data to Firebase Storage
+				imageRef
+					.putString(encodedData, 'base64')
+					.then(function (snapshot) {
+						console.log('Image uploaded successfully.');
+
+						// Get the download URL of the uploaded image
+						return imageRef.getDownloadURL();
+					})
+					.then(function (downloadURL) {
+						// Get the Name and Phone Number from the input fields
+						var name = document.getElementById('nameInput').value;
+						var phone = document.getElementById('phoneInput').value;
+
+						// Save the ID, Name, and image URL to the Realtime Database
+						firebase
+							.database()
+							.ref('users/' + id)
+							.set({
+								ID: id,
+								Name: name,
+								ImageURL: downloadURL,
+							})
+							.then(function () {
+								console.log('Data saved successfully.');
+							})
+							.catch(function (error) {
+								console.log('Error saving data:', error);
+							});
+					})
+					.catch(function (error) {
+						console.log('Error uploading image:', error);
+					});
 			}
 
 			document.getElementById('toggleButton').addEventListener('click', function () {
