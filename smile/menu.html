@@ -27,8 +27,40 @@
 				text-align: center;
 			}
 
+			.menu-card {
+				border: none;
+				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.menu-card-header {
+				background-color: #f8f8f8;
+				border-bottom: 1px solid #ddd;
+				padding: 20px;
+				font-weight: bold;
+				font-size: 18px;
+			}
+
+			.menu-card-body {
+				padding: 20px;
+			}
+
 			.menu-option {
+				margin-bottom: 30px;
+			}
+
+			.menu-option-heading {
+				font-size: 24px;
+				margin-bottom: 10px;
+			}
+
+			.menu-option-description {
+				font-size: 16px;
+				color: #777777;
 				margin-bottom: 20px;
+			}
+
+			.menu-option-button {
+				font-size: 18px;
 			}
 
 			.footer {
@@ -111,16 +143,27 @@
 
 		<div class="container">
 			<div class="row">
-				<div class="col-md-4 offset-md-4">
+				<div class="col-md-6 offset-md-3">
 					<div class="menu-container">
-						<div class="menu-option">
-							<a href="#" class="btn btn-primary btn-block">Add Student</a>
-						</div>
-						<div class="menu-option">
-							<a href="#" class="btn btn-primary btn-block">Check in Student</a>
-						</div>
-						<div class="menu-option">
-							<a href="#" class="btn btn-primary btn-block">Modify Information</a>
+						<div class="card menu-card">
+							<div class="card-header menu-card-header">Menu Options</div>
+							<div class="card-body menu-card-body">
+								<div class="menu-option">
+									<h3 class="menu-option-heading">Add Student</h3>
+									<p class="menu-option-description">Add a new student to the system.</p>
+									<a href="#" class="btn btn-primary btn-block menu-option-button">Add Student</a>
+								</div>
+								<div class="menu-option">
+									<h3 class="menu-option-heading">Check in Student</h3>
+									<p class="menu-option-description">Check in a student and record their attendance.</p>
+									<a href="#" class="btn btn-primary btn-block menu-option-button">Check in Student</a>
+								</div>
+								<div class="menu-option">
+									<h3 class="menu-option-heading">Modify Information</h3>
+									<p class="menu-option-description">Modify student information in the system.</p>
+									<a href="#" class="btn btn-primary btn-block menu-option-button">Modify Information</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
