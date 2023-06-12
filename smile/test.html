@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-	<link type="image/x-icon" href="./smile.jpg" rel="icon" />
 	<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
 	<head>
 		<title>Camera Access Example</title>
@@ -94,8 +93,7 @@
 					<label for="phoneInput">Phone Number:</label>
 					<input type="text" id="phoneInput" name="phone" /><br /><br />
 
-					<!-- Add the hidden input for image data -->
-					<input type="hidden" id="imageDataInput" name="imageData" />
+					<input type="submit" value="Submit" />
 				</form>
 				<button id="toggleButton">Turn Camera On</button>
 				<button id="captureButton">Capture Image</button>
@@ -154,17 +152,17 @@
 				var imgData = canvas.toDataURL('image/jpeg');
 				var encodedData = imgData.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
 
-				// Get the ID from the input field
+				// Get the ID input value
 				var id = document.getElementById('idInput').value;
 
-				// Create a folder name with the current date
+				// Create a folder name
 				var folderName = 'Images';
-
-				// Generate a unique filename for the image using the ID
-				var filename = folderName + '/' + id + '.jpg';
 
 				// Create a reference to the Firebase Storage bucket
 				var storageRef = firebase.storage().ref();
+
+				// Generate a unique filename for the image using the ID input value
+				var filename = folderName + '/' + id + '.jpg';
 
 				// Create a child reference to the image file
 				var imageRef = storageRef.child(filename);
@@ -174,30 +172,6 @@
 					.putString(encodedData, 'base64')
 					.then(function (snapshot) {
 						console.log('Image uploaded successfully.');
-
-						// Get the download URL of the uploaded image
-						return imageRef.getDownloadURL();
-					})
-					.then(function (downloadURL) {
-						// Get the Name and Phone Number from the input fields
-						var name = document.getElementById('nameInput').value;
-						var phone = document.getElementById('phoneInput').value;
-
-						// Save the ID, Name, and image URL to the Realtime Database
-						firebase
-							.database()
-							.ref('users/' + id)
-							.set({
-								ID: id,
-								Name: name,
-								ImageURL: downloadURL,
-							})
-							.then(function () {
-								console.log('Data saved successfully.');
-							})
-							.catch(function (error) {
-								console.log('Error saving data:', error);
-							});
 					})
 					.catch(function (error) {
 						console.log('Error uploading image:', error);
@@ -218,6 +192,40 @@
 				} else {
 					alert('Please turn on the camera first.');
 				}
+			});
+
+			var form = document.getElementById('dataForm');
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault();
+
+				// Get the form input values
+				var id = document.getElementById('idInput').value;
+				var name = document.getElementById('nameInput').value;
+				var phone = document.getElementById('phoneInput').value;
+
+				// Construct the API URL with the form data
+				var apiUrl =
+					'http://192.168.0.112:8000/create_database?id=' +
+					encodeURIComponent(id) +
+					'&Name=' +
+					encodeURIComponent(name) +
+					'&Phone=' +
+					encodeURIComponent(phone);
+
+				// Make a request to the API endpoint
+				fetch(apiUrl)
+					.then(function (response) {
+						// Check if the response is successful
+						if (response.ok) {
+							console.log('Data submitted successfully.');
+						} else {
+							throw new Error('Failed to submit data to the API.');
+						}
+					})
+					.catch(function (error) {
+						console.log('Error:', error.message);
+					});
 			});
 		</script>
 	</body>
