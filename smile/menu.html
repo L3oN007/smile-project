@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Menu Page</title>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+		<style>
+			body {
+				font-family: 'Roboto', sans-serif;
+				background-color: #f2f2f2;
+				padding-bottom: 80px;
+			}
+
+			.navbar {
+				background-color: #ffffff;
+				border-bottom: 1px solid #ddd;
+			}
+
+			.navbar-brand {
+				font-weight: bold;
+				font-size: 24px;
+				color: #333333;
+			}
+
+			.menu-container {
+				margin-top: 50px;
+				text-align: center;
+			}
+
+			.menu-option {
+				margin-bottom: 20px;
+			}
+
+			.footer {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				padding: 20px;
+				background-color: #ffffff;
+				box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.footer-text {
+				font-size: 14px;
+				color: #999999;
+				text-align: center;
+			}
+
+			.avatar-dropdown {
+				position: absolute;
+				top: 50%;
+				right: 20px;
+				transform: translateY(-50%);
+			}
+
+			.avatar-dropdown-toggle {
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 0;
+			}
+
+			.avatar-dropdown-menu {
+				position: absolute;
+				top: 100%;
+				right: 0;
+				margin-top: 10px;
+				min-width: 160px;
+				padding: 8px 0;
+				background-color: #ffffff;
+				box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+				border-radius: 4px;
+				text-align: left;
+				display: none;
+			}
+
+			.avatar-dropdown-menu.show {
+				display: block;
+			}
+
+			.avatar-dropdown-item {
+				padding: 8px 20px;
+				color: #333333;
+				font-size: 14px;
+				text-decoration: none;
+				display: block;
+				transition: background-color 0.3s ease;
+			}
+
+			.avatar-dropdown-item:hover {
+				background-color: #f8f8f8;
+			}
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-md">
+			<a class="navbar-brand" href="#">Menu Page</a>
+
+			<div class="avatar-dropdown">
+				<button class="avatar-dropdown-toggle" id="avatarDropdownToggle">
+					<img src="user.jpg" alt="User Avatar" width="40" height="40" />
+				</button>
+				<div class="avatar-dropdown-menu" id="avatarDropdownMenu" aria-labelledby="avatarDropdownToggle">
+					<a class="avatar-dropdown-item" href="#">User Profile</a>
+					<a class="avatar-dropdown-item" href="#">Password Setting</a>
+					<a class="avatar-dropdown-item" href="#">Logout</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 offset-md-4">
+					<div class="menu-container">
+						<div class="menu-option">
+							<a href="#" class="btn btn-primary btn-block">Add Student</a>
+						</div>
+						<div class="menu-option">
+							<a href="#" class="btn btn-primary btn-block">Check in Student</a>
+						</div>
+						<div class="menu-option">
+							<a href="#" class="btn btn-primary btn-block">Modify Information</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer class="footer">
+			<div class="container">
+				<p class="footer-text">Made with ❤️ by Your Name</p>
+			</div>
+		</footer>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script>
+			document.getElementById('avatarDropdownToggle').addEventListener('click', function () {
+				document.getElementById('avatarDropdownMenu').classList.toggle('show');
+			});
+
+			document.addEventListener('click', function (event) {
+				var dropdownMenu = document.getElementById('avatarDropdownMenu');
+				var dropdownToggle = document.getElementById('avatarDropdownToggle');
+
+				if (!dropdownMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
+					dropdownMenu.classList.remove('show');
+				}
+			});
+		</script>
+	</body>
+</html>
